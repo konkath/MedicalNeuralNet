@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CSVLoader.h"
+#include "TrainingData.h"
 
 #include <iostream>
 #include <fstream>
@@ -23,13 +24,10 @@ bool CSVLoader::loadFile(std::string filename)
 		while (!file.eof())
 		{
 			file >> rawData;
-			auto dupa = getDataSet(rawData);
-			std::cout << dupa;
-
 			data.push_back(getDataSet(rawData));
 		}
 
-		// insert data into TrainingData class
+		TrainingData::getTrainingData().populateData(std::move(data));
 	}
 	else
 	{
@@ -59,5 +57,5 @@ DataSet CSVLoader::getDataSet(std::string rawData)
 	}
 	auto solution = atoi(singleItem.c_str());
 
-	return DataSet(data, Solution(solution));
+	return DataSet(std::move(data), Solution(solution));
 }
