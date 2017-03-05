@@ -51,7 +51,7 @@ DataSet CSVLoader::getDataSet(std::string rawData)
 		}
 		else
 		{
-			data.push_back(atof(singleItem.c_str()));
+			data.push_back(static_cast<float>(atof(singleItem.c_str())));
 			singleItem = "";
 		}
 	}
