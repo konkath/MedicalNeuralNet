@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "CSVLoader.h"
 #include "DataSet.h"
 
 #include <iostream>
@@ -9,7 +10,9 @@
 
 int main()
 {
-	auto dataSet = DataSet(std::vector<float>(10, 0), Solution(1));
+	CSVLoader csvLoader("D:\\docs\\Skryptownia\\VIII sem\\MedicalNeuralNet\\brzuch.csv");
+
+	DataSet dataSet(std::vector<float>(10, 0), Solution(1));
 	std::cout << dataSet;
 
 	{

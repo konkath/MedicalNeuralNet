@@ -145,12 +145,14 @@
     <Text Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CSVLoader.h" />
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Enums\Solution.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSVLoader.cpp" />
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Enums\Solution.cpp" />
     <ClCompile Include="Main.cpp" />
