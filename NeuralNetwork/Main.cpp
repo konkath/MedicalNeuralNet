@@ -2,10 +2,26 @@
 //
 
 #include "stdafx.h"
+#include "DataSet.h"
 
+#include <iostream>
+#include <vector>
 
 int main()
 {
+	auto dataSet = DataSet(std::vector<float>(10, 0), Solution(1));
+	std::cout << dataSet;
+
+	{
+		std::vector<float> vec(10, 5);
+		dataSet = DataSet(std::move(vec), Solution(3));
+
+		std::cout << dataSet;
+	}
+
+	std::cout << dataSet;
+
+	getchar();
     return 0;
 }
 
