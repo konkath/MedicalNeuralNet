@@ -16,7 +16,7 @@ RandomGenerator<T> & RandomGenerator<T>::getGenerator()
 template<typename T>
 T RandomGenerator<T>::getRandom(T begin, T end)
 {
-	return T();
+	return static_cast<T>T();
 }
 
 template<>
