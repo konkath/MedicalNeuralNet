@@ -14,7 +14,7 @@ class DataSet
 public:
 	DataSet(std::vector<float>& trainingData, Solution solution);
 
-	short getSolution();
+	Solution getSolution();
 
 	const float operator[](const int index);
 	friend std::ostream& operator<<(std::ostream& os, const DataSet& dataSet);

@@ -8,7 +8,7 @@ DataSet::DataSet(std::vector<float>& trainingData, Solution solution)
 {
 }
 
-short DataSet::getSolution()
+Solution DataSet::getSolution()
 {
 	return solution;
 }
