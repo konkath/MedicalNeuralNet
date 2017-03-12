@@ -41,9 +41,9 @@ void NeuralNet::calculateLayer(unsigned index)
 
 		for (auto& prevNeuron : neurons[index - 1])
 		{
-			valueSum += prevNeuron.getValue() * prevNeuron[neuronIdx] / exp(-1 * activationFunction);
+			valueSum += prevNeuron.getValue() * prevNeuron[neuronIdx];
 		}
-		neuron.setValue(valueSum);
+		neuron.setValue(1 / (1 + exp(-1 * activationFunction * valueSum)));
 	}
 }
 
