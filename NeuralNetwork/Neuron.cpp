@@ -27,7 +27,7 @@ void Neuron::setValue(float v)
 	value = v;
 }
 
-float Neuron::operator[](const int index)
+float& Neuron::operator[](const int index)
 {
 	return weights[index];
 }

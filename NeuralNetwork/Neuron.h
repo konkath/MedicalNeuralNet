@@ -10,7 +10,7 @@ public:
 	float getValue();
 	void setValue(float v);
 
-	float operator[](const int index);
+	float& operator[](const int index);
 
 private:
 	void initializeRandomWeights();

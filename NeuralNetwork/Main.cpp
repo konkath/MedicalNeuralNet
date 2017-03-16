@@ -14,39 +14,46 @@ int main()
 	CSVLoader csvLoader("D:\\docs\\Skryptownia\\VIII sem\\MedicalNeuralNet\\brzuch.csv");
 	auto& trainingData(TrainingData::getTrainingData());
 
-	auto set = trainingData.getTrainingSets();
+	std::vector<unsigned> networkLayers = { 31, 62, 8 };
+	auto network(NeuralNet(networkLayers, 0.5, false, 0.5));
 
-	std::vector<unsigned> networkLayers = { 31, 30, 8 };
-
-	auto network(NeuralNet(networkLayers, 0.25, false, 0.5));
-
-	auto good = 0, bad = 0;
-	for (auto& test : set.first)
+	for (auto i = 0; i < 1000; ++i)
 	{
-		if (test.getSolution() == network.generateSolution(test))
+		auto set = trainingData.getTrainingSets();
+		network.learnNetwork(set.first);
+
+		auto good = 0, bad = 0;
+		for (auto& test : set.second)
 		{
-			good++;
+			if (test.getSolution() == network.generateSolution(test))
+			{
+				good++;
+			}
+			else
+			{
+				bad++;
+			}
 		}
-		else
+
+		std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
+
+		network.learnNetwork(set.second);
+
+		good = 0, bad = 0;
+		for (auto& test : set.first)
 		{
-			bad++;
+			if (test.getSolution() == network.generateSolution(test))
+			{
+				good++;
+			}
+			else
+			{
+				bad++;
+			}
 		}
+
+		std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
 	}
-
-	for (auto& test : set.second)
-	{
-		if (test.getSolution() == network.generateSolution(test))
-		{
-			good++;
-		}
-		else
-		{
-			bad++;
-		}
-	}
-
-	std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
-
 	getchar();
 	////////////////////////////////////////////////////////////////////////////////////
 
