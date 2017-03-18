@@ -142,3 +142,13 @@ std::vector<float> NeuralNet::learnHiddenLayer(unsigned layerIdx,
 
 	return layerErrors;
 }
+
+void NeuralNet::saveNetwork(const std::string fileName)
+{
+	xml.saveFile(fileName, neurons);
+}
+
+void NeuralNet::loadNetwork(const std::string fileName)
+{
+	neurons = xml.loadFile(fileName);
+}

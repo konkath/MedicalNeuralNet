@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CSVLoader.h"
-#include "TrainingData.h"
+#include "../TrainingData.h"
 
 #include <iostream>
 #include <fstream>

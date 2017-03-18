@@ -145,24 +145,25 @@
     <Text Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CSVLoader.h" />
+    <ClInclude Include="Utils\CSVLoader.h" />
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Enums\Solution.h" />
     <ClInclude Include="NeuralNet.h" />
     <ClInclude Include="Neuron.h" />
-    <ClInclude Include="RandomGenerator.h" />
+    <ClInclude Include="Utils\RandomGenerator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrainingData.h" />
+    <ClInclude Include="Utils\XmlOperator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CSVLoader.cpp" />
+    <ClCompile Include="Utils\CSVLoader.cpp" />
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Enums\Solution.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NeuralNet.cpp" />
     <ClCompile Include="Neuron.cpp" />
-    <ClCompile Include="RandomGenerator.cpp" />
+    <ClCompile Include="Utils\RandomGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -170,6 +171,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TrainingData.cpp" />
+    <ClCompile Include="Utils\XmlOperator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\brzuch.csv" />

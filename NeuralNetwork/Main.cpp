@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "CSVLoader.h"
+#include "Utils/CSVLoader.h"
 #include "TrainingData.h"
 #include "NeuralNet.h"
 
@@ -17,7 +17,7 @@ int main()
 	std::vector<unsigned> networkLayers = { 31, 62, 8 };
 	auto network(NeuralNet(networkLayers, 0.5, false, 0.5));
 
-	for (auto i = 0; i < 1000; ++i)
+	for (auto i = 0; i < 5; ++i)
 	{
 		auto set = trainingData.getTrainingSets();
 		network.learnNetwork(set.first);
@@ -54,6 +54,18 @@ int main()
 
 		std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
 	}
+
+	getchar();
+	////////////////////////////////////////////////////////////////////////////////////
+
+	auto set = trainingData.getTrainingSets();
+	std::cout << to_string(network.generateSolution(set.first[0])) << std::endl;
+
+	network.saveNetwork("test.xml");
+	network.loadNetwork("test.xml");
+
+	std::cout << to_string(network.generateSolution(set.first[0])) << std::endl;
+
 	getchar();
 	////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,4 +79,3 @@ int main()
 	getchar();
     return 0;
 }
-

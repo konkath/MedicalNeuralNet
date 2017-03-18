@@ -1,10 +1,15 @@
 #include "stdafx.h"
 #include "Neuron.h"
-#include "RandomGenerator.h"
+#include "Utils/RandomGenerator.h"
 
 Neuron::Neuron(unsigned nOfConnections) : weights(nOfConnections)
 {
 	initializeRandomWeights();
+}
+
+Neuron::Neuron(std::vector<float> weights) : weights(weights)
+{
+
 }
 
 void Neuron::initializeRandomWeights()
@@ -13,7 +18,7 @@ void Neuron::initializeRandomWeights()
 
 	for (auto& weight : weights)
 	{
-		weight = generator.getRandom(-0.3, 0.3);
+		weight = generator.getRandom(-0.3f, 0.3f);
 	}
 }
 
@@ -32,3 +37,7 @@ float& Neuron::operator[](const int index)
 	return weights[index];
 }
 
+unsigned Neuron::size()
+{
+	return weights.size();
+}

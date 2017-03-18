@@ -3,6 +3,7 @@
 #include "DataSet.h"
 #include "Neuron.h"
 #include "Enums\Solution.h"
+#include "Utils\XmlOperator.h"
 
 #include <vector>
 
@@ -14,6 +15,9 @@ public:
 
 	Solution generateSolution(DataSet& dataSet);
 	void learnNetwork(std::vector<DataSet>& learningData);
+
+	void saveNetwork(const std::string fileName);
+	void loadNetwork(const std::string fileName);
 
 private:
 	void populateInputLayer(DataSet& dataSet);
@@ -31,4 +35,6 @@ private:
 	float activationFunction;
 	bool momentum;
 	std::vector<std::vector<Neuron>> neurons;
+
+	XmlOperator xml;
 };
