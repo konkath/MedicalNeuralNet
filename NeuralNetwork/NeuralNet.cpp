@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "NeuralNet.h"
 
+#include <algorithm>
+#include <iostream>
+
 NeuralNet::NeuralNet(std::vector<unsigned> neuronLayers, float learningConstant, bool momentum,
 	float activationFunction) : learningConstant(learningConstant), momentum(momentum),
-	activationFunction(activationFunction), networkError(FLT_MAX)
+	activationFunction(activationFunction), networkError(FLT_MAX), trainingData(TrainingData::getTrainingData())
 {
 	for (auto it = neuronLayers.begin(); it != neuronLayers.end(); ++it)
 	{
@@ -30,6 +33,18 @@ Solution NeuralNet::generateSolution(DataSet& dataSet)
 	}
 
 	return getBestOutput();
+}
+
+std::pair<unsigned, unsigned> NeuralNet::generateSolution(std::vector<DataSet>& dataSets)
+{
+	auto correct = 0, wrong = 0;
+	for (auto& set : dataSets)
+	{
+		auto solution = generateSolution(set);
+		solution == set.getSolution() ? correct++ : wrong++;
+	}
+
+	return std::make_pair(correct, wrong);
 }
 
 void NeuralNet::populateInputLayer(DataSet& dataSet)
@@ -72,33 +87,64 @@ Solution NeuralNet::getBestOutput()
 	return Solution(bestSolution.first);
 }
 
-void NeuralNet::learnNetwork(std::vector<DataSet>& learningData)
+void NeuralNet::errorLearning(float acceptedError)
 {
-	for (auto& data : learningData)
-	{
-		auto solution = data.getSolution();		
-		while (generateSolution(data) != solution)
-		{
-			std::vector<std::vector<Neuron>> newNetwork(neurons);
-			auto errors = learnOutputLayer(solution, newNetwork);
+	auto avgNetworkError = .0f;
+	auto sets = trainingData.getTrainingSets(.85f, .15f);
 
-			// output and input layer are ignored here
-			for (auto layerIdx = neurons.size() - 2; layerIdx > 0; --layerIdx)
-			{
-				errors = learnHiddenLayer(layerIdx, errors, newNetwork);
-			}
-			neurons = newNetwork;
-		}
+	do
+	{
+		auto networkError = learnNetwork(sets.first);
+		avgNetworkError = networkError / (sets.first.size() + sets.second.size());
+
+		std::random_shuffle(sets.first.begin(), sets.first.end());
+	} while (acceptedError < avgNetworkError);
+
+	auto solutions = generateSolution(sets.second);
+	std::cout << "Learning finished with acceptedError:" << avgNetworkError << std::endl << 
+		"Unused data correct/wrong ratio: " << solutions.first << "/" << solutions.second << std::endl;
+}
+
+void NeuralNet::crossoverLearning(unsigned iterations)
+{
+	for (auto i = 0u; i < iterations; ++i)
+	{
+		auto sets = trainingData.getTrainingSets();
+		learnNetwork(sets.first);
+
+		auto solutions = generateSolution(sets.second);
+		std::cout << "Iteration: " << i << ", ratio: " << solutions.first << "/" << solutions.second << std::endl;
 	}
 }
 
+float NeuralNet::learnNetwork(std::vector<DataSet>& learningData)
+{
+	auto networkError = .0f;
+
+	for (auto& data : learningData)
+	{	
+		generateSolution(data);
+
+		std::vector<std::vector<Neuron>> newNetwork(neurons);
+		auto errors = learnOutputLayer(data.getSolution(), newNetwork, networkError);
+
+		// output and input layer are ignored here
+		for (auto layerIdx = neurons.size() - 2; layerIdx > 0; --layerIdx)
+		{
+			errors = learnHiddenLayer(layerIdx, errors, newNetwork);
+		}
+		neurons = newNetwork;
+	}
+
+	return networkError;
+}
+
 std::vector<float> NeuralNet::learnOutputLayer(Solution solution, 
-	std::vector<std::vector<Neuron>>& newNetwork)
+	std::vector<std::vector<Neuron>>& newNetwork, float& networkError)
 {
 	auto outputLayer = neurons.size() - 1, nOfOutputNeurons = neurons[outputLayer].size();
 	std::vector<float> errors(nOfOutputNeurons);
 
-	networkError = 0;
 	for (auto idx = 0u; idx < nOfOutputNeurons; ++idx)
 	{
 		auto neuronValue = neurons[outputLayer][idx].getValue();

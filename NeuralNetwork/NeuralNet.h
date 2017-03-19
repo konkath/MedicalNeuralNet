@@ -2,6 +2,7 @@
 
 #include "DataSet.h"
 #include "Neuron.h"
+#include "TrainingData.h"
 #include "Enums\Solution.h"
 #include "Utils\XmlOperator.h"
 
@@ -14,7 +15,10 @@ public:
 		float activationFunction);
 
 	Solution generateSolution(DataSet& dataSet);
-	void learnNetwork(std::vector<DataSet>& learningData);
+	std::pair<unsigned, unsigned> generateSolution(std::vector<DataSet>& dataSets);
+
+	void errorLearning(float acceptedError);
+	void crossoverLearning(unsigned iterations);
 
 	void saveNetwork(const std::string fileName);
 	void loadNetwork(const std::string fileName);
@@ -24,17 +28,18 @@ private:
 	void calculateLayer(unsigned index);
 	Solution getBestOutput();
 
-	std::vector<float> learnOutputLayer(Solution solution, std::vector<std::vector<Neuron>>& newNetwork);
+	float learnNetwork(std::vector<DataSet>& learningData);
+	std::vector<float> learnOutputLayer(Solution solution, std::vector<std::vector<Neuron>>& newNetwork,
+		float& networkError);
 	std::vector<float> learnHiddenLayer(unsigned layerIdx, std::vector<float>& errors,
 		std::vector<std::vector<Neuron>>& newNetwork);
 
 	float networkError;
-	float acceptedError;
-	
 	float learningConstant;
 	float activationFunction;
 	bool momentum;
 	std::vector<std::vector<Neuron>> neurons;
 
 	XmlOperator xml;
+	TrainingData& trainingData;
 };

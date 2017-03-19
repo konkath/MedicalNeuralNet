@@ -12,63 +12,37 @@
 int main()
 {
 	CSVLoader csvLoader("D:\\docs\\Skryptownia\\VIII sem\\MedicalNeuralNet\\brzuch.csv");
-	auto& trainingData(TrainingData::getTrainingData());
 
 	std::vector<unsigned> networkLayers = { 31, 62, 8 };
-	auto network(NeuralNet(networkLayers, 0.5, false, 0.5));
+	auto network1(NeuralNet(networkLayers, 0.5, false, 0.5));
 
-	for (auto i = 0; i < 5; ++i)
-	{
-		auto set = trainingData.getTrainingSets();
-		network.learnNetwork(set.first);
+	std::cout << "Error learning:" << std::endl;
+	network1.errorLearning(0.0015f);
 
-		auto good = 0, bad = 0;
-		for (auto& test : set.second)
-		{
-			if (test.getSolution() == network.generateSolution(test))
-			{
-				good++;
-			}
-			else
-			{
-				bad++;
-			}
-		}
+	////////////////////////////////////////////////////////////////////////////////////
 
-		std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
-
-		network.learnNetwork(set.second);
-
-		good = 0, bad = 0;
-		for (auto& test : set.first)
-		{
-			if (test.getSolution() == network.generateSolution(test))
-			{
-				good++;
-			}
-			else
-			{
-				bad++;
-			}
-		}
-
-		std::cout << "Good guesses " << good << std::endl << "Poor guesses " << bad << std::endl;
-	}
+	auto network2(NeuralNet(networkLayers, 0.5, false, 0.5));
+	
+	std::cout << "Crossover learning:" << std::endl;
+	network2.crossoverLearning(5);
 
 	getchar();
 	////////////////////////////////////////////////////////////////////////////////////
 
+	auto& trainingData(TrainingData::getTrainingData());
 	auto set = trainingData.getTrainingSets();
-	std::cout << to_string(network.generateSolution(set.first[0])) << std::endl;
+	std::cout << to_string(network1.generateSolution(set.first[0])) << std::endl;
 
-	network.saveNetwork("test.xml");
-	network.loadNetwork("test.xml");
+	std::cout << "XML test:" << std::endl;
+	network1.saveNetwork("test.xml");
+	network1.loadNetwork("test.xml");
 
-	std::cout << to_string(network.generateSolution(set.first[0])) << std::endl;
+	std::cout << to_string(network1.generateSolution(set.first[0])) << std::endl;
 
 	getchar();
 	////////////////////////////////////////////////////////////////////////////////////
 
+	std::cout << "DataSet test:" << std::endl;
 	for (auto i = 0; i < 2; ++i)
 	{
 		auto sets = trainingData.getTrainingSets();

@@ -12,7 +12,8 @@ public:
 	static TrainingData& getTrainingData(); 
 
 	void populateData(std::vector<DataSet>& dataSet);
-	std::pair<std::vector<DataSet>, std::vector<DataSet>> getTrainingSets();
+	std::pair<std::vector<DataSet>, std::vector<DataSet>> getTrainingSets(
+		float firstSetSize = .5f, float secondSetSize = .5f);
 
 	const DataSet& operator[](const int index);
 
