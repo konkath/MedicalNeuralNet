@@ -12,7 +12,7 @@ class NeuralNet
 {
 public:
 	NeuralNet(std::vector<unsigned> neuronLayers, float learningConstant, bool momentum,
-		float activationFunction);
+		float momentumConstant, float activationFunction);
 
 	Solution generateSolution(DataSet& dataSet);
 	std::pair<unsigned, unsigned> generateSolution(std::vector<DataSet>& dataSets);
@@ -29,13 +29,17 @@ private:
 	Solution getBestOutput();
 
 	float learnNetwork(std::vector<DataSet>& learningData);
-	std::vector<float> learnOutputLayer(Solution solution, std::vector<std::vector<Neuron>>& newNetwork,
-		float& networkError);
+	std::vector<float> learnOutputLayer(Solution solution, std::vector<std::vector<Neuron>>& oldNetwork,
+		std::vector<std::vector<Neuron>>& newNetwork, float& networkError);
 	std::vector<float> learnHiddenLayer(unsigned layerIdx, std::vector<float>& errors,
-		std::vector<std::vector<Neuron>>& newNetwork);
+		std::vector<std::vector<Neuron>>& oldNetwork, std::vector<std::vector<Neuron>>& newNetwork);
+
+	void calculateWeights(std::vector<Neuron>& oldLayer, std::vector<Neuron>& layer,
+		std::vector<float> errors, unsigned weightIdx);
 
 	float networkError;
 	float learningConstant;
+	float momentumConstant;
 	float activationFunction;
 	bool momentum;
 	std::vector<std::vector<Neuron>> neurons;

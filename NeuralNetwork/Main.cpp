@@ -13,18 +13,38 @@ int main()
 {
 	CSVLoader csvLoader("D:\\docs\\Skryptownia\\VIII sem\\MedicalNeuralNet\\brzuch.csv");
 
+	std::cout << "NO MOMENTUM" << std::endl << std::endl;
+
 	std::vector<unsigned> networkLayers = { 31, 62, 8 };
-	auto network1(NeuralNet(networkLayers, 0.5, false, 0.5));
+	auto network1(NeuralNet(networkLayers, .5f, false, .9f, .5f));
 
 	std::cout << "Error learning:" << std::endl;
 	network1.errorLearning(0.0015f);
 
 	////////////////////////////////////////////////////////////////////////////////////
 
-	auto network2(NeuralNet(networkLayers, 0.5, false, 0.5));
+	auto network2(NeuralNet(networkLayers, .5f, false, .9f, .5f));
 	
 	std::cout << "Crossover learning:" << std::endl;
 	network2.crossoverLearning(5);
+
+	////////////////////////////////////////////////////////////////////////////////////
+
+	std::cout << std::endl << "MOMENTUM" << std::endl << std::endl;
+
+	////////////////////////////////////////////////////////////////////////////////////
+
+	auto network3(NeuralNet(networkLayers, .5f, true, .9f, .5f));
+
+	std::cout << "Error learning:" << std::endl;
+	network3.errorLearning(0.0015f);
+
+	////////////////////////////////////////////////////////////////////////////////////
+
+	auto network4(NeuralNet(networkLayers, .5f, true, .9f, .5f));
+
+	std::cout << "Crossover learning:" << std::endl;
+	network4.crossoverLearning(5);
 
 	getchar();
 	////////////////////////////////////////////////////////////////////////////////////

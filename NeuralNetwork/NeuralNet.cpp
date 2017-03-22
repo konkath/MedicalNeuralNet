@@ -5,8 +5,9 @@
 #include <iostream>
 
 NeuralNet::NeuralNet(std::vector<unsigned> neuronLayers, float learningConstant, bool momentum,
-	float activationFunction) : learningConstant(learningConstant), momentum(momentum),
-	activationFunction(activationFunction), networkError(FLT_MAX), trainingData(TrainingData::getTrainingData())
+	float momentumConstant, float activationFunction) : learningConstant(learningConstant), momentum(momentum),
+	momentumConstant(momentumConstant), activationFunction(activationFunction), networkError(FLT_MAX),
+	trainingData(TrainingData::getTrainingData())
 {
 	for (auto it = neuronLayers.begin(); it != neuronLayers.end(); ++it)
 	{
@@ -121,18 +122,20 @@ float NeuralNet::learnNetwork(std::vector<DataSet>& learningData)
 {
 	auto networkError = .0f;
 
+	auto oldNetwork(neurons);
 	for (auto& data : learningData)
 	{	
 		generateSolution(data);
 
 		std::vector<std::vector<Neuron>> newNetwork(neurons);
-		auto errors = learnOutputLayer(data.getSolution(), newNetwork, networkError);
+		auto errors = learnOutputLayer(data.getSolution(), oldNetwork, newNetwork, networkError);
 
 		// output and input layer are ignored here
 		for (auto layerIdx = neurons.size() - 2; layerIdx > 0; --layerIdx)
 		{
-			errors = learnHiddenLayer(layerIdx, errors, newNetwork);
+			errors = learnHiddenLayer(layerIdx, errors, oldNetwork, newNetwork);
 		}
+		oldNetwork = neurons;
 		neurons = newNetwork;
 	}
 
@@ -140,6 +143,7 @@ float NeuralNet::learnNetwork(std::vector<DataSet>& learningData)
 }
 
 std::vector<float> NeuralNet::learnOutputLayer(Solution solution, 
+	std::vector<std::vector<Neuron>>& oldNetwork,
 	std::vector<std::vector<Neuron>>& newNetwork, float& networkError)
 {
 	auto outputLayer = neurons.size() - 1, nOfOutputNeurons = neurons[outputLayer].size();
@@ -153,10 +157,7 @@ std::vector<float> NeuralNet::learnOutputLayer(Solution solution,
 		networkError += static_cast<float>(0.5 * pow(neuronValue - result, 2));  // singleError
 		errors[idx] = neuronValue * (1 - neuronValue) * -(result - neuronValue);  // current neuron error
 
-		for (auto& prevNeuron : newNetwork[outputLayer - 1])
-		{
-			prevNeuron[idx] -= errors[idx] * prevNeuron.getValue() * learningConstant;  // weight modification
-		}
+		calculateWeights(oldNetwork[outputLayer - 1], newNetwork[outputLayer - 1], errors, idx);
 	}
 
 	return errors;
@@ -164,7 +165,8 @@ std::vector<float> NeuralNet::learnOutputLayer(Solution solution,
 
 // delta w = q (learning constant) * d (propagated error) * z (neuron value)
 std::vector<float> NeuralNet::learnHiddenLayer(unsigned layerIdx, 
-	std::vector<float>& errors, std::vector<std::vector<Neuron>>& newNetwork)
+	std::vector<float>& errors, std::vector<std::vector<Neuron>>& oldNetwork, 
+	std::vector<std::vector<Neuron>>& newNetwork)
 {
 	auto layerSize = neurons[layerIdx].size(), errorsSize = errors.size();
 	std::vector<float> layerErrors(layerSize);
@@ -180,13 +182,27 @@ std::vector<float> NeuralNet::learnHiddenLayer(unsigned layerIdx,
 		auto neuronValue = neurons[layerIdx][neuronIdx].getValue();
 		layerErrors[neuronIdx] = static_cast<float>(errorSum * neuronValue * (1 - neuronValue));  //current neuron error
 		
-		for (auto& prevNeuron : newNetwork[layerIdx - 1])
-		{
-			prevNeuron[neuronIdx] -= layerErrors[neuronIdx] * prevNeuron.getValue() * learningConstant;  // weight modification
-		}
+		calculateWeights(oldNetwork[layerIdx - 1], newNetwork[layerIdx - 1], layerErrors, neuronIdx);
 	}
 
 	return layerErrors;
+}
+
+void NeuralNet::calculateWeights(std::vector<Neuron>& oldLayer, std::vector<Neuron>& layer,
+	std::vector<float> errors, unsigned weightIdx)
+{
+	for (auto neuronIdx = 0u; neuronIdx < layer.size(); ++neuronIdx)
+	{
+		auto& prevNeuron = layer[neuronIdx];
+
+		if (momentum)
+		{
+			auto& oldNeuron = oldLayer[neuronIdx];
+			prevNeuron[weightIdx] -= momentumConstant * (prevNeuron[weightIdx] - oldNeuron[weightIdx]);
+		}
+
+		prevNeuron[weightIdx] -= errors[weightIdx] * prevNeuron.getValue() * learningConstant;  // weight modification
+	}
 }
 
 void NeuralNet::saveNetwork(const std::string fileName)
